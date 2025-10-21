@@ -1,0 +1,378 @@
+<?php error_reporting(error_reporting() & ~E_NOTICE) ?>
+<script language="javascript" src="<?= base_url('assets/js/main.js') ?>"></script>
+<script language="javascript" src="<?= base_url('assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js') ?>"></script>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- Input addon -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas  fa-pizza-slice"></i>
+                            Input Data Makan dan Minum
+                        </h3>
+                    </div>
+
+                    <div class="card-body">
+                        <form name="sptpdForm" id="form" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <input type="hidden" name="wp_id" id="wp_id" class="form-control-sm wp_id" />
+                            <input type="hidden" name="spt_jenis" id="spt_jenis" class="form-control-sm spt_jenis" />
+                            <input type="hidden" name="npwpd" id="npwpd" class="form-control-sm npwpd" />
+                            <input type="hidden" name="kegus_id" id="kegus_id" class="form-control-sm kegus_id" />
+                            <input type="hidden" name="jenput_id" id="jenput_id" class="form-control-sm jenput_id" />
+                            <div class="col-12">
+                                <h4>
+                                    <small class="float-right">Date: <?php echo date('d/m/Y'); ?></small>
+                                </h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label label for="wp_id_detil" class="col-sm-4">Pengusaha Kena Pajak </label>
+                                        <div class="col-sm-8">
+                                            <select name="wp_id_detil" id="wp_id_detil" class="form-control input-sm" onchange="get_data()" style="width: 100%;">
+                                                <option value=""> -- Pilih Daftar Wajib Pajak -- </option>
+                                                <?php
+                                                foreach ($list_wp as $row) {
+                                                    echo '<option value="' . $row->wp_wr_detil_id . '">' . $row->nama . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- data wp -->
+                                    <div class="card bg-light">
+                                        <div class="card-header text-muted border-bottom-0">
+                                            Informasi WP
+                                        </div>
+                                        <div class="card-body pt-0">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h2 class="lead"><b> <span class="nm_badan"></span></b></h2>
+                                                    <p class="text-muted text-sm"><b>Kegiatan Usaha : </b><span class="about"> </span> </p>
+                                                    <ul class="ml-4 mb-0 fa-ul text-muted">
+                                                        <li class="large"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Alamat : <span class="alamat"></span></li>
+                                                        <li class="large"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone : <span class="no_telp"> </span></span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-5 text-center">
+                                                    <img src="../../dist/img/user1-128x128.jpg" alt="" class="img-circle img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label label for="pengguna_catering" class="col-sm-4">Pengguna Catering </label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="pengguna_catering" id="pengguna_catering">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered" width="100%">
+
+                                            <tbody>
+                                                <tr align="center">
+                                                    <td>Tanggal</td>
+                                                    <td>Periode</td>
+                                                    <td>Omset</td>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-xs-3 col-sm-5">
+                                                                <div class="form-group">
+
+                                                                    <div class="input-group date" id="searchStartDate" data-target-input="nearest">
+                                                                        <input type="text" class="form-control spt_periode_jual1" name="spt_periode_jual1" id="flatpickr" placeholder="Pilih Masa Pajak 1" onchange="tahun_pajak()" />
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>s/d
+                                                            <div class="col-xs-3 col-sm-5">
+                                                                <div class="form-group">
+
+                                                                    <div class="input-group date" id="searchEndDate" data-target-input="nearest">
+
+                                                                        <input type="text" class="form-control" name="spt_periode_jual2" id="flatpickr" placeholder="Pilih Masa Pajak 2" />
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="spt_periode" id="spt_periode" style="text-align:center;" size="11" value="<?= date('Y') ?>" class="form-control" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" name="jenis_pajak" id="jenis_pajak" style="text-align:center;" class="form-control jenis_pajak" readonly="true" />
+                                                        <input type="text" name="omset" id="omset" class="form-control" style="text-align:right;" onfocus="this.value=unformatCurrency(this.value);" placeholder="Rp." required />
+                                                    </td>
+                                                </tr>
+
+                                                <tr align="center">
+                                                    <td>Dasar Pengenaan (Rp.)</td>
+                                                    <td>Tarif (%)</td>
+                                                    <td>Pajak Terhutang (Rp.)</td>
+                                                </tr>
+                                                <tr align="center">
+                                                    <td>
+                                                        <input type="text" name="spt_nilai" id="spt_nilai" class="form-control" style="text-align:right;" onfocus="this.value=unformatCurrency(this.value);" onkeyup="hitung_pajak('spt_pajak','spt_nilai','korek_persen_tarif');" onblur="hitung_pajak('spt_pajak','spt_nilai','korek_persen_tarif');this.value=formatCurrency(this.value);" placeholder="Rp." required />
+
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="korek_persen_tarif" id="korek_persen_tarif" style="text-align:right;" class="form-control persen_tarif" readonly="true" placeholder="%">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="spt_pajak" id="spt_pajak" class="form-control" readonly="true" style="text-align:right;" onkeyup="thousand_format(this);" onkeypress="return only_number(event,this);" placeholder="Rp.">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">Ket. Kegiatan : </label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">Lampiran File : </label>
+                                        <div class="col-sm-8">
+                                            <div class='alert alert-warning' role='alert'>
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" name="imagefile" id="imagefile">
+                                                    <label class="custom-file-label" for="imagefile" accept=".pdf, image/*" style="color:red;" required> *Upload file .pdf</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label class="col-sm-3 text-center">Informasi Tagihan Pajak </label>
+
+                                                    <h2 class="lead  text-muted text-right">Dasar Pengenaan: <b><span class="spt_nilai_text"></span></b></h2>
+                                                    <h2 class="lead  text-muted text-right">Tarif Pajak: <b><span class="persen_tarif_text"></span></Tarif>
+                                                    </h2>
+                                                    <h2 class="lead  text-muted text-right"> Pajak Terutang: <b><span class="spt_pajak_text"></span></b></h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="msg-tmp"></div>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <button type="reset" class="btn btn-secondary  back">Batal</button>
+                        <button type="button" class="btn btn-success float-right" onclick="save()"><i class="fab fa-creative-commons-share"></i> Generate Billing
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+    <!-- /.row -->
+
+    </div><!-- /.container-fluid -->
+</section>
+<script type="text/javascript">
+    $("#wp_id_detil").select2();
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    function get_data() {
+        let wp_id_detil = $('#wp_id_detil').val()
+        let url = "<?php echo site_url('esptpd/get_data_wp') ?>"
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: {
+                wp_id_detil: wp_id_detil
+            },
+            dataType: "JSON",
+            success: function(response) {
+                $('.wp_id').val(response.wp_wr_id);
+                $('.npwpd').val(response.npwprd);
+                $('.spt_jenis').val(response.pajak_id);
+                $('.kegus_id').val(response.kegus_id);
+                $('.jenput_id').val(response.jenis_pemungutan);
+                $('.nm_badan').text(response.nama);
+                $('.jenis_pajak').val(response.nama_paret);
+                $('.persen_tarif').val(response.persen_tarif);
+                $('.persen_tarif_text').text(response.persen_tarif + '%');
+                $('.alamat').text(response.alamat);
+                $('.about').text(response.nama_kegus);
+                $('.no_telp').text(response.no_telepon);
+            }
+        });
+    }
+
+    $(document).on('keyup', "#spt_nilai", function() {
+        var spt_nilai = $('#spt_nilai').val();
+        var spt_pajak = $('#spt_pajak').val();
+        var tes = addCommas(spt_pajak);
+        var spt_pajak = spt_pajak.substr(0, spt_pajak.length - 3);
+        $(".spt_nilai_text").text('Rp. ' + addCommas(spt_nilai));
+        $(".spt_pajak_text").text('Rp. ' + spt_pajak);
+    });
+
+    $(document).on('keyup', "#omset", function() {
+        var omset = $('#omset').val();
+        var spt_nilai = $('#spt_nilai').val();
+        var dpp = (100 / 110) * omset
+        dpp = Math.ceil(dpp)
+        $('#spt_nilai').val(dpp)
+    });
+
+    $(document).on('change', "#omset", function() {
+        var omset = $('#omset').val();
+        $('#omset').val(formatCurrency(omset))
+    });
+
+    function addCommas(nStr) {
+        nStr += '';
+        var comma = /,/g;
+        nStr = nStr.replace(comma, '');
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + '.' + '$2');
+        }
+        return x1 + x2;
+    }
+
+    $('input[type="checkbox"]').click(function() {
+
+        if ($(this).prop("checked") == true) {
+            check_pajak();
+        } else if ($(this).prop("checked") == false) {
+            check_pajak();
+        }
+
+    });
+
+    function hitung_pajak(objSptPajak, objDasarPengenaan, objPersen) {
+        if ($('#' + objPersen).val() == "" && $('#' + objPersen).val() == 0) {
+            var pajak = Math.round((unformatCurrency($('#' + objDasarPengenaan).val()) * 1) * (100 * 1) / 100);
+        } else {
+            var pajak = Math.round((unformatCurrency($('#' + objDasarPengenaan).val()) * 1) * (($('#' + objPersen).val() * 1) / 100));
+        }
+
+        $('#' + objSptPajak).val(formatCurrency(pajak));
+    }
+
+    function save() {
+        var url = "<?php echo site_url('esptpd/insert_mamin') ?>";
+
+        var formdata = new FormData($('#form')[0]);
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formdata,
+            dataType: "JSON",
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.status == true) //if success close modal and reload ajax table
+                {
+                    Swal.fire({
+                        title: 'Save!',
+                        text: 'Your File has bees save.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    window.location.assign("<?php echo site_url('pelayanan/espt_print') ?>/" + data.spt_id);
+                } else if (data.error == true) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.msg,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    $('#btnSave').attr('disabled', false); //set button disable 
+                } else {
+                    for (var i = 0; i < data.inputerror.length; i++) {
+                        $('[name="' + data.inputerror[i] + '"]').addClass('is-invalid');
+                        $('[name="' + data.inputerror[i] + '"]').closest('.kosong').append('<span></span>');
+                        $('[name="' + data.inputerror[i] + '"]').next().text(data.error_string[i]).addClass('invalid-feedback');
+                    }
+                    $('#btnSave').attr('disabled', false); //set button disable 
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // console.log(jqXHR);
+                // alert(jqXHR);
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Error!!.'
+                });
+                $('#btnSave').text('save'); //change button text
+                $('#btnSave').attr('disabled', false); //set button enable 
+
+            }
+        });
+    }
+
+    $("#imagefile").change(function() {
+        var fileExtension = ['pdf', 'png', 'jpg', 'jpeg'];
+        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Format File Harus  : " + fileExtension.join(', '));
+            $("#imagefile").val('');
+        } else {
+            bsCustomFileInput.init();
+        }
+    });
+    flatpickr("#flatpickr", {
+        dateFormat: "Y-m-d", // Format tanggal
+        minDate: "2020-01-01", // min date
+        maxDate: "2025-12-31", // min date
+        allowInput: true,
+    });
+
+    function tahun_pajak() {
+        // Ambil nilai dari input date
+        const dateValue = $('.spt_periode_jual1').val(); // Format: 'YYYY-MM-DD'
+
+        if (dateValue) {
+            // Ambil tahun dari nilai input
+            const year = dateValue.split('-')[0]; // Potong string berdasarkan '-'
+            $('#spt_periode').val(year);
+        } else {
+            alert('harap pilih tanggal masa pajak 1')
+        }
+
+    }
+</script>
+<script language="javascript" src="<?= base_url('assets/js/pajak_hotel.js') ?>">

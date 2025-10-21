@@ -1,0 +1,115 @@
+echo "
+<form id='form' name='form' class='form-horizontal form-label-left' method='POST' >
+      <div class='form-group'>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>ID BILLING</label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control readonly-bg' name='id_billing' id='id_billing' value='" . $billing_id . "' readonly />
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Nomor SPT <font color='red'>*</font></label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control readonly-bg' name='no_pelayanan' id='no_pelayanan' value='" . $spt_id . "' readonly />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class='form-group'>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Petugas Penerima</label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control readonly-bg' name='nm_petugas' id='nm_petugas' value='' readonly />
+                    <input type='hidden' name='id_petugas' id='id_petugas' value='' />
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Tahun Pajak</label>
+                <div class='col-md-8'>
+                   <input type='text' name='spt_periode' id='spt_periode' value='" . $spt_periode . "' readonly/>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <div class='form-group'>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Masa Awal <font color='red'>*</font></label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control datepicker' name='masa_awal' id='masa_awal' value='" . $spt_periode_jual1 . "' readonly required />
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Masa Akhir <font color='red'>*</font></label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control datepicker' name='masa_akhir' id='masa_akhir' value='" . $spt_periode_jual2 . "' readonly required />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class='form-group'>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Jenis Pelayanan <font color='red'>*</font></label>
+                <div class='col-md-8'> 
+                        &nbsp;
+                <label class='col-md-4 control-label'>Nama Pemohon <font color='red'>*</font></label>
+                <div class='col-md-8'>
+                    <input type='text' class='form-control' name='nama_pemohon' id='nama_pemohon' value='' required />
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <div class='form-group'>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>Periode Pajak</label>
+                <div class='col-md-8'>
+                 <input type='text' class='form-control'  name='spt_periode' id='spt_periode' value='" . $spt_periode . "' style=\"text-align: left;\" readonly required/>
+                 </div>
+            </div>
+            <div class='col-md-6'>
+                <label class='col-md-4 control-label'>SPT PAJAK</label>
+                <div class='col-md-8'>
+                     <input type='text' class='form-control' name='spt_pajak' id='spt_pajak' value='" . number_format($spt_pajak) . "' style=\"text-align: right;\"  readonly required />
+                </div>
+            </div>
+        </div>
+    </div>
+     
+    <br />
+    <h5 align='center'><i class='fa fa-files-o'></i> Lampiran Dokumen</h3>
+        <div class='form-group pull-right'>
+            <label class='col-md-2 control-label'>Lihat Lampiran</label>
+            <div class='col-md-10'>
+
+                <button type='button' title='Lampiran' class='btn btn-xs btn-default'   onclick=\"window.open('" . base_url('esptpd/lampiran/') . $billing_id . "',' mybook','scrollbars=1,width=500,height=700');\" target=\"_blank\">
+                     <embed src='" . base_url('assets/foto/lampiran/' . $lampiran) . "' width='200' height='250'></embed><br>
+                    <i class='fa fa-search-plus'> Klik Untuk Memperbesar </i>
+                </button>
+            </div>
+        </div>
+        <div class='form-group'>
+            <label class='col-md-2 control-label'>&nbsp;</label>
+            <div class='col-md-10'>
+                <input type='checkbox' name='stat_regis' id='stat_regis' value='1'  />&nbsp;Pending Register
+            </div>
+        </div>
+        <div class='form-group'>
+            <label class='col-md-2 control-label'>Keterangan</label>
+            <div class='col-md-10'>
+                <textarea name='ket_register' id='ket_register' class='form-control'> </textarea>
+            </div>
+        </div>
+        <div class='ln_solid'></div>
+        <div class='form-group'>
+            <div class='col-md-10 col-sm-10 col-xs-12 col-md-offset-2'>
+                <button type='reset' class='btn btn-danger _btnbatal' onclick=\"history.back()\" id='close-modal-form' data-dismiss='modal'>Batal</button>
+                <button type='submit' class='btn btn-success _btnsimpan'  id=\"btnSave\" onclick=\"save()\" >Simpan</button>
+            </div>
+        </div>
+</form>";
+
+                    ?>
