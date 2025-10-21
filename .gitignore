@@ -35,3 +35,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 #env database
 /application/config/database.php
+
+#web.config
+/web.config
