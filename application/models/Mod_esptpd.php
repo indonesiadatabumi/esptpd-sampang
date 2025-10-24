@@ -37,7 +37,7 @@ class Mod_esptpd extends CI_Model
     function _get_esptpd_menu()
     {
 
-        $this->db->select('a.wp_wr_id, a.npwprd, a.pajak_id, b. wp_wr_detil_id, b.nama');
+        $this->db->select('a.wp_wr_id, a.npwprd, a.pajak_id, b.nopd, b. wp_wr_detil_id, b.nama');
         $this->db->join('wp_wr_detil b', 'a.wp_wr_id=b.wp_wr_id');
         $this->db->where("a.npwprd", $this->session->userdata('username'));
         if ($this->session->userdata('username') != '220.004.02.02.0001') {
@@ -353,7 +353,7 @@ class Mod_esptpd extends CI_Model
         $month = date('m');
 
         $this->db->select('spt_id, wp_wr_id, tgl_proses, tahun_pajak, masa_pajak1, masa_pajak2, pajak, 
-				kode_billing, status_bayar, tgl_lapor, wp_wr_id, nilai_terkena_pajak, pajak_id ');
+				kode_billing, status_bayar, tgl_lapor, wp_wr_id, nilai_terkena_pajak, pajak_id, image ');
         $this->db->where('masa_pajak1 >=', '2023-01-01');
         // $this->db->where('masa_pajak1 <=', '' . $year . '-' . $month . '-01');
         $this->db->order_by('tgl_proses desc');
@@ -906,5 +906,84 @@ class Mod_esptpd extends CI_Model
 
         $query = $this->db->get();
         return $query->row();
+    }
+
+    function get_spt_by_id($spt_id)
+    {
+        $this->db->select('*');
+        $this->db->where("spt_id", $spt_id);
+        $this->db->from('v_spt2');
+
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    function updateBuktiBayar($id, $data)
+    {
+        $this->db->where('spt_id', $id);
+        $this->db->update('spt', $data);
+    }
+
+    function getDataWP($kode_billing)
+    {
+        $this->db->select('*');
+        $this->db->where("kode_billing", $kode_billing);
+        $this->db->from('v_spt2');
+
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    function get_daftar_bulanan($bulan, $tahun, $wp_id_detil)
+    {
+        $this->db->select('*');
+        $this->db->from('spt');
+        $this->db->where('EXTRACT(MONTH FROM masa_pajak1) =', (int)$bulan, false);
+        $this->db->where('EXTRACT(YEAR FROM masa_pajak1) =', (int)$tahun, false);
+        $this->db->where('wp_wr_detil_id', $wp_id_detil);
+        $this->db->where('status_bayar', '1');
+
+        return $this->db->get()->result();
+    }
+
+    public function get_total_bulanan($bulan, $tahun, $wp_id_detil)
+    {
+        $this->db->select('SUM(pajak) AS total_pajak');
+        $this->db->from('spt');
+        $this->db->where('EXTRACT(MONTH FROM masa_pajak1) =', (int)$bulan, false);
+        $this->db->where('EXTRACT(YEAR FROM masa_pajak1) =', (int)$tahun, false);
+        $this->db->where('wp_wr_detil_id', $wp_id_detil);
+        $this->db->where('status_bayar', '1');
+
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function update_lapor_spt($masa_pajak, $spt_periode, $wp_id_detil, $save)
+    {
+        $this->db->where('EXTRACT(MONTH FROM masa_pajak1) =', (int)$masa_pajak, false);
+        $this->db->where('EXTRACT(YEAR FROM masa_pajak1) =', (int)$spt_periode, false);
+        $this->db->where('wp_wr_detil_id', $wp_id_detil);
+        $this->db->where('status_bayar', '1');
+        $this->db->update('spt', $save);
+    }
+
+    public function get_data_lapor($wp_wr_detil_id)
+    {
+        $this->db->select("
+            EXTRACT(MONTH FROM masa_pajak1) AS bulan_pajak,
+            EXTRACT(YEAR FROM masa_pajak1) AS tahun_pajak,
+            SUM(pajak) AS total_pajak,
+            tgl_lapor
+        ", false);
+        $this->db->from('spt');
+        $this->db->where('wp_wr_detil_id', '1');
+        $this->db->where('tgl_lapor IS NOT NULL', null, false);
+        $this->db->where('status_bayar', '1');
+        $this->db->group_by("EXTRACT(MONTH FROM masa_pajak1), EXTRACT(YEAR FROM masa_pajak1), tgl_lapor");
+        $this->db->order_by("bulan_pajak ASC");
+        $query = $this->db->get();
+
+        return $query->result();
     }
 }

@@ -5,7 +5,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-bars"></i>
-                    Menu Generate Billing
+                    Menu Lapor SPTPD
                 </h3>
             </div>
             <div class="card-body">
@@ -27,31 +27,11 @@
                             echo "<tr><td>" . $no++ . "</td>
                                         <td>" . $row->nopd . "</td>
                                         <td>" . $row->nama . "</td>";
-                            // if ($row->pajak_id == 7) {
-                            //     echo
-                            //     "<td align='center'>
-                            //             <button   onclick=\"window.location='" . base_url('esptpd/add/') . $row->wp_wr_detil_id . "'\"  class='btn btn-sm btn-outline-info _lapor'><i class='fa fa-edit'></i> Input SPTPD</button>
-                            //             </td>
-                            //         </tr>";
-                            // } else {
-                            //     echo "<td align='center'>
-                            //             <a href=" . base_url('esptpd/billing/') . $row->wp_wr_detil_id . " class='btn btn-sm btn-outline-success _lapor'><i class='fa fa-info'></i> Detil </a>&nbsp;
-                            //             <button   onclick=\"window.location='" . base_url('esptpd/add/') . $row->wp_wr_detil_id . "'\"  class='btn btn-sm btn-outline-info _lapor'><i class='fa fa-edit'></i> Input SPTPD</button>
-                            //             </td>
-                            //         </tr>";
-                            // }
-                            if ($row->wp_wr_detil_id == '1614') {
-                                echo "<td align='center'>
-                                        <a href=" . base_url('esptpd/billing/') . $row->wp_wr_detil_id . " class='btn btn-sm btn-outline-success _lapor'><i class='fa fa-info'></i> Detil </a>&nbsp;
+                            echo "<td align='center'>
+                                        <a href=" . base_url('lapor_pajak/daftar_lapor/') . $row->wp_wr_detil_id . " class='btn btn-sm btn-outline-success _lapor'><i class='fa fa-info'></i> Detil </a>&nbsp;
+                                        <button   onclick=\"window.location='" . base_url('lapor_pajak/create_lapor/') . $row->wp_wr_detil_id . "'\"  class='btn btn-sm btn-outline-info _lapor'><i class='fa fa-edit'></i> Lapor Pajak</button>
                                         </td>
                                     </tr>";
-                            } else {
-                                echo "<td align='center'>
-                                        <a href=" . base_url('esptpd/billing/') . $row->wp_wr_detil_id . " class='btn btn-sm btn-outline-success _lapor'><i class='fa fa-info'></i> Detil </a>&nbsp;
-                                        <button   onclick=\"window.location='" . base_url('esptpd/create_billing/') . $row->wp_wr_detil_id . "'\"  class='btn btn-sm btn-outline-info _lapor'><i class='fa fa-edit'></i> Generate Billing</button>
-                                        </td>
-                                    </tr>";
-                            }
                         }
                         ?>
 

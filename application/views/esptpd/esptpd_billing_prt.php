@@ -40,10 +40,15 @@
                         <td align="center">KODE BILLING</td>
                     </tr>
                     <tr>
-                        <td style="width:120px; text-align:center; font-size:14px; font-weight:bold; ">3505<?= $kode_pajak->rek_bank ?><?= $billing_id ?></td>
+                        <td style="width:120px; text-align:center; font-size:14px; font-weight:bold; "><?= $billing_id ?></td>
                     </tr>
                 </table>
             </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
         </tr>
         <tr>
             <td>JENIS PAJAK</td>
@@ -56,6 +61,9 @@
         <tr>
             <td>Pokok Pajak</td>
             <td>: Rp. <?= number_format($spt_pajak, 2, ",", ".") ?></td>
+            <?php if ($status_bayar == '1') :  ?>
+                <td rowspan="4" align="center"><img src="<?= FCPATH . 'assets/images/stempel_lunas.jpg' ?>" width=" 100" height="100"></td>
+            <?php endif ?>
         </tr>
         <tr>
             <td>Denda</td>

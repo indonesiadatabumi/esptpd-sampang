@@ -186,12 +186,10 @@ class Esptpd extends MY_Controller
             $data['lampiran'] = $billing->image;
         }
 
-        $list2 = $this->Mod_esptpd->getdataPayment($billing_id);
-        foreach ($list2 as $wpwr) {
-            $data['npwprd'] = $wpwr->npwpd;
-            $data['wp_wr_nama'] = $wpwr->nama_wp;
-            $data['wp_wr_almt'] = $wpwr->alamat;
-        }
+        $list2 = $this->Mod_esptpd->getDataWP($billing_id);
+        $data['npwprd'] = $list2->npwpd;
+        $data['wp_wr_nama'] = $list2->nama_wp;
+        $data['wp_wr_almt'] = $list2->alamat;
 
         $list3 = $this->Mod_esptpd->getdataPelayanan($billing_id);
 
@@ -679,108 +677,25 @@ class Esptpd extends MY_Controller
                 $total_bayar = $biling->pajak;
             }
 
-            $bln_pajak = date("m", strtotime($biling->masa_pajak1));
-            $bln_kemarin = date("m", mktime(0, 0, 0, date("m") - 1));
 
-            $thn_pajak = date("Y", strtotime($biling->masa_pajak1));
-            //$thn_kemarin = date("Y", mktime(0, 0, 0, date("Y")-1 ));
-
-            $t = date('Y');
-            $b = date('m');
-            $masa_aktiv =  $b = date('m'); //$t."-".$b;
-
-            $masa_entri = substr($biling->masa_pajak1, 5, 2);
-            $thn_entri = substr($biling->masa_pajak1, 0, 4);
-
-
-            if ($masa_entri == $bln_kemarin and $thn_entri == $t) {
-                if ($biling->status_bayar == '0') {
-                    if ($biling->pajak < 1) {
-                        // $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/editesptpd/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        // <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        // <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\"  data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        // <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>
-                        // <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/edit_generate_billing/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\"  data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                    } else {
-                        // $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/editesptpd/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        // <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        // <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        // <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>
-                        // <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>
-                        // <a class=\"btn btn-xs btn-outline-success\" id=\"bayar\" href=\"https://e-pada.blitarkab.go.id/portal_payment/pdl/tagihan_sptpd.php?kode_billing=" . $biling->kode_billing . "\" title=\"Bayar\" target=\"_blank\"><i class=\"fas fa-money\"> Bayar</i></a>";
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/edit_generate_billing/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
+            if ($biling->status_bayar == '0') {
+                $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/edit_generate_billing/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
                         <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
                         <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                    }
-                } else {
-                    if ($biling->tgl_lapor == null) {
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/lapor_pajak/' . $biling->spt_id . '/' . $biling->pajak_id . '/' . $biling->kode_billing) . "><i class=\"fas fa-edit\"></i> Lapor Pajak</a>
-                            <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
+            } else {
+                if ($biling->tgl_lapor == null) {
+                    $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/upload_lampiran/' . $biling->spt_id . '/' . $biling->pajak_id . '/' . $biling->kode_billing) . "><i class=\"fas fa-edit\"></i> Upload Bukti Bayar</a>
                             <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
                             <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"></i> Lampiran</a>";
-                    } else {
-                        $aksi = "<a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                            <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                            <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>";
-                    }
-                }
-            } else {
-                if ($biling->status_bayar == '0') {
-                    if ($biling->pajak < 1) {
-                        // $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/editesptpd/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        // <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        // <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>˙
-                        // <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>
-                        // <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/edit_generate_billing/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                    } else {
-                        // $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/editesptpd/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        // <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        // <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>˙
-                        // <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>
-                        // <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>
-                        // <a class=\"btn btn-xs btn-outline-success\" id=\"bayar\" href=\"https://e-pada.blitarkab.go.id//portal_payment/pdl/tagihan_sptpd.php?kode_billing=" . $biling->kode_billing . "\" title=\"Bayar\" target=\"_blank\"><i class=\"fas fa-money\"> Bayar</i></a>";
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/edit_generate_billing/' . $biling->spt_id . '/' . $biling->pajak_id) . "><i class=\"fas fa-edit\"></i> Edit</a>
-                        <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        <a class=\"btn btn-xs btn-outline-danger\" id=\"delete\" href=\"javascript:void(0)\" title=\"Hapus\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-trash\"> Hapus</i></a>";
-                    }
                 } else {
-                    if ($biling->tgl_lapor == null) {
-                        $aksi = "<a class=\"btn btn-xs btn-outline-primary\" href=" . base_url('esptpd/lapor_pajak/' . $biling->spt_id . '/' . $biling->pajak_id . '/' . $biling->kode_billing) . "><i class=\"fas fa-edit\"></i> Lapor Pajak</a>
-                        <a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"></i> Lampiran</a>";
-                    } else {
-                        $aksi = "<a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        <a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
-                        <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>";
-                    }
+                    $aksi = "<a class=\"btn btn-xs btn-outline-success\" href=\"javascript:void(0)\" id=\"billing\" title=\"billing\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Billing</a>
+                            <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>";
                 }
-            }
-
-            if ($biling->pajak_id == 7) {
-                $aksi = "<a class=\"btn btn-xs btn-outline-info\" href=\"javascript:void(0)\" id=\"esptpd\" title=\"esptpd\" target=\"_blank\" data-href=" . $biling->spt_id . "/" . $biling->pajak_id . "><i class=\"fas fa-print\"></i> Esptpd</a>
-                        <a class=\"btn btn-xs btn-outline-warning\" id=\"lampiran\" href=\"javascript:void(0)\" title=\"Lampiran\" data-href=" . $biling->kode_billing . "><i class=\"fas fa-link\"> Lampiran</i></a>";
             }
 
             if ($biling->tgl_lapor == null) {
-                if ($explode[0] <= '2023' && $explode[1] <= '16') {
-                    if ($explode_entry[0] >= '2024') {
-                        $status_lapor = "<i class='far fa-times-circle' style='color:red;'></i> <span class='text-danger'>Blm Lapor</span>";
-                        $tgl_lapor = '-';
-                    } else {
-                        $status_lapor = "<i class='far fa-check-circle' style='color:green;'></i><span class='text-success'>Sudah Lapor</span>";
-                        $tgl_lapor = '-';
-                    }
-                } else {
-                    $status_lapor = "<i class='far fa-times-circle' style='color:red;'></i> <span class='text-danger'>Blm Lapor</span>";
-                    $tgl_lapor = '-';
-                }
+                $status_lapor = "<i class='far fa-times-circle' style='color:red;'></i> <span class='text-danger'>Blm Lapor</span>";
+                $tgl_lapor = '-';
             } else {
                 $status_lapor = "<i class='far fa-check-circle' style='color:green;'></i><span class='text-success'>Sudah Lapor</span>";
                 $tgl_lapor = $biling->tgl_lapor;
@@ -1998,5 +1913,61 @@ class Esptpd extends MY_Controller
 
 
         $this->template->load('layoutbackend', 'esptpd/' . $add_form, $data);
+    }
+
+    public function upload_lampiran($spt_id)
+    {
+        error_reporting(~E_NOTICE);
+
+        $data_billing = $this->Mod_esptpd->get_spt_by_id($spt_id);
+        $data['data_billing'] = $data_billing;
+        $data['spt_id'] = $spt_id;
+        $add_form =  "upload_lampiran";
+
+        $this->template->load('layoutbackend', 'esptpd/' . $add_form, $data);
+    }
+
+    public function insert_upload_lampiran()
+    {
+        $spt_id    = $this->input->post('spt_id');
+        $kode_billing = $this->input->post('kode_billing');
+        $nama = $kode_billing . '_lampiran';
+        $config['upload_path']   = './assets/foto/lampiran/';
+        $config['allowed_types'] = 'pdf'; //mencegah upload backdor
+        $config['max_size']      = '1000';
+        $config['max_width']     = '2000';
+        $config['max_height']    = '1024';
+        $config['file_name']     = $nama;
+
+        $this->upload->initialize($config);
+
+        if ($this->upload->do_upload('imagefile')) {
+            $gambar = $this->upload->data();
+
+            $save  = array(
+                'image' => $gambar['file_name']
+            );
+
+            $this->Mod_esptpd->updateBuktiBayar($spt_id, $save);
+
+            echo json_encode(array("status" => TRUE));
+        } else {
+            echo json_encode(array(
+                "error" => True,
+                "msg" => "Lampiran gagal di upload!!"
+            ));
+        }
+    }
+
+    public function lapor_pajak()
+    {
+        $logged_in = $this->session->userdata('logged_in');
+        $user_id = $this->session->userdata('id_user');
+        if ($logged_in != TRUE || empty($logged_in)) {
+            redirect('login');
+        } else {
+            $data['esptpd'] = $this->Mod_esptpd->_get_esptpd_menu();
+            $this->template->load('layoutbackend', 'esptpd/esptpd_menu', $data);
+        }
     }
 }
