@@ -934,6 +934,19 @@ class Mod_esptpd extends CI_Model
         return $query->row();
     }
 
+    function cek_bulan_lapor_pajak($bulan, $tahun, $wp_id_detil)
+    {
+        $this->db->select('*');
+        $this->db->from('spt');
+        $this->db->where('EXTRACT(MONTH FROM masa_pajak1) =', (int)$bulan, false);
+        $this->db->where('EXTRACT(YEAR FROM masa_pajak1) =', (int)$tahun, false);
+        $this->db->where('wp_wr_detil_id', $wp_id_detil);
+        $this->db->where('status_bayar', '1');
+        $this->db->where('tgl_lapor IS NOT NULL', null, false);
+
+        return $this->db->get()->result();
+    }
+
     function get_daftar_bulanan($bulan, $tahun, $wp_id_detil)
     {
         $this->db->select('*');
@@ -977,7 +990,7 @@ class Mod_esptpd extends CI_Model
             tgl_lapor
         ", false);
         $this->db->from('spt');
-        $this->db->where('wp_wr_detil_id', '1');
+        $this->db->where('wp_wr_detil_id', $wp_wr_detil_id);
         $this->db->where('tgl_lapor IS NOT NULL', null, false);
         $this->db->where('status_bayar', '1');
         $this->db->group_by("EXTRACT(MONTH FROM masa_pajak1), EXTRACT(YEAR FROM masa_pajak1), tgl_lapor");
@@ -985,5 +998,16 @@ class Mod_esptpd extends CI_Model
         $query = $this->db->get();
 
         return $query->result();
+    }
+
+    function data_wp($wp_id_detil)
+    {
+        $this->db->select('a.*, b.nama_paret');
+        $this->db->from('wp_wr_detil a');
+        $this->db->join('bundel_pajak_retribusi b', 'a.pajak_id = b.bundel_id', 'left');
+        $this->db->where('a.wp_wr_detil_id', $wp_id_detil);
+        $query = $this->db->get();
+
+        return $query->row();
     }
 }

@@ -153,65 +153,60 @@
                     $('#data_pembayaran').html('<td colspan="2">Memuat data...</td>');
                 },
                 success: function(response) {
-                    if (response.status) {
+                    if (response.status == true) {
                         let html = `
-                        <td colspan="2">
-                            <div class="alert alert-info">
-                                Total Pajak Bulan <b>${bulan}</b> Tahun <b>${tahun}</b>: 
-                                <b>Rp ${parseInt(response.total_pajak).toLocaleString('id-ID')}</b>
-                            </div>
-                            <table class="table table-bordered table-sm mt-2">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Masa Pajak</th>
-                                        <th>Kode Billing</th>
-                                        <th>Nilai Pajak</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
+                            <td colspan="2">
+                                <div class="alert alert-info">
+                                    Total Pajak Bulan <b>${bulan}</b> Tahun <b>${tahun}</b>: 
+                                    <b>Rp ${parseInt(response.total_pajak).toLocaleString('id-ID')}</b>
+                                </div>
+                                <table class="table table-bordered table-sm mt-2">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Masa Pajak</th>
+                                            <th>Kode Billing</th>
+                                            <th>Nilai Pajak</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
 
                         if (response.data.length > 0) {
                             $.each(response.data, function(i, item) {
                                 html += `
-                                <tr>
-                                    <td>${i + 1}</td>
-                                    <td>${item.masa_pajak1 ?? '-'} - ${item.masa_pajak2 ?? '-'}</td>
-                                    <td>${item.kode_billing ?? '-'}</td>
-                                    <td align="right">Rp ${parseInt(item.pajak).toLocaleString('id-ID')}</td>
-                                </tr>
-                            `;
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td>${item.masa_pajak1 ?? '-'} - ${item.masa_pajak2 ?? '-'}</td>
+                                        <td>${item.kode_billing ?? '-'}</td>
+                                        <td align="right">Rp ${parseInt(item.pajak).toLocaleString('id-ID')}</td>
+                                    </tr>
+                                `;
                             });
                         } else {
                             html += `
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">Tidak ada data untuk bulan ini</td>
-                            </tr>
-                        `;
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Tidak ada data untuk bulan ini</td>
+                                </tr>
+                            `;
                         }
 
                         html += `
-                                </tbody>
-                            </table>
-                        </td>
-                    `;
+                                    </tbody>
+                                </table>
+                            </td>
+                        `;
 
                         $('#data_pembayaran').html(html);
+
+                        let total = parseInt(response.total_pajak || 0);
+                        let formatted = total.toLocaleString('id-ID'); // hasil: 12.345
+
+                        //set total pajak
+                        $('#spt_pajak').val(formatted);
                     } else {
-                        $('#data_pembayaran').html(`
-                        <td colspan="2">
-                            <div class="alert alert-warning">Tidak ada data untuk bulan ${bulan}</div>
-                        </td>
-                    `);
-
-
+                        alert(response.message)
                     }
-                    let total = parseInt(response.total_pajak || 0);
-                    let formatted = total.toLocaleString('id-ID'); // hasil: 12.345
-
-                    //set total pajak
-                    $('#spt_pajak').val(formatted);
                 },
                 error: function(xhr, status, error) {
                     console.log(error);

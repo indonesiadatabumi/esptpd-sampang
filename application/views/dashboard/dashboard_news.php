@@ -35,7 +35,7 @@
                                 </div>
                                 <!-- /.user-block -->
                                 <p>
-                                    Selamat datang di Sistem Informasi Pelaporan Pajak Daerah Kab. BLITAR, pastikan untuk memperbaharui data anda secara berkala.
+                                    Selamat datang di Sistem Informasi Pelaporan Pajak Daerah Kab. Sampang, pastikan untuk memperbaharui data anda secara berkala.
                                     <br>Terimakasih.
                                 </p>
 

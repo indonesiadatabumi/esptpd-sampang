@@ -57,6 +57,17 @@ class Lapor_pajak extends MY_Controller
         $tahun = $this->input->post('tahun');
         $wp_id_detil = $this->input->post('wp_id_detil');
 
+        $cek_lapor_pajak = $this->Mod_esptpd->cek_bulan_lapor_pajak($bulan, $tahun, $wp_id_detil);
+        if ($cek_lapor_pajak) {
+            $response = [
+                'status' => false,
+                'message' => 'Masa pajak sudah dilaporkan'
+            ];
+
+            echo json_encode($response);
+            exit;
+        }
+
         $data_bulanan = $this->Mod_esptpd->get_daftar_bulanan($bulan, $tahun, $wp_id_detil);
         $total_bulanan = $this->Mod_esptpd->get_total_bulanan($bulan, $tahun, $wp_id_detil);
 
@@ -146,103 +157,120 @@ class Lapor_pajak extends MY_Controller
         $wp_wr_detil_id =  $this->uri->segment(3);
         $bulan_pajak  =  $this->uri->segment(4);
         $tahun_pajak  =  $this->uri->segment(5);
-        echo "Dalam Pengembangan";
-        die;
+        $data_wp = $this->Mod_esptpd->data_wp($wp_wr_detil_id);
+        $data_lapor = $this->Mod_esptpd->cek_bulan_lapor_pajak($bulan_pajak, $tahun_pajak, $wp_wr_detil_id);
 
-        $list = $this->Mod_esptpd->getPrint($spt_id);
-        foreach ($list as $billing) {
-            $data['spt_nomor'] = $billing->spt_id;
-            $data['spt_tahun_pajak'] = $billing->tahunpajak;
-            $data['spt_idwpwr'] = $billing->wp_wr_id;
-            $data['spt_tgl_entry'] = $this->fungsi->tanggalindo($billing->tgl_proses);
-            $data['spt_periode'] = $billing->tahun_pajak;
-            $data['spt_periode_jual1'] = $billing->masa_pajak1;
-            $data['spt_periode_jual2'] = $billing->masa_pajak2;
-            $data['spt_pajak'] = $billing->pajak;
-            $data['spt_dt_jumlah'] = $billing->nilai_terkena_pajak;
-            $data['spt_korek_persen_tarif'] = $billing->persen_tarif;
-            $data['spt_nama'] = $billing->nama;
-            $data['billing_id'] = $billing->kode_billing;
-            $data['status_bayar'] = $billing->status_bayar;
-            $data['spt_golongan'] = $billing->golongan;
-            $data['spt_jenispajak'] = $billing->jenis;
-            $data['npwprd'] = $billing->npwprd;
-        }
+        $data_bulan = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+        ];
 
-        if ($jenispajak == '1') {
-            $espt_prt = "esptpd_hotel_prt";
-            $where = array('wp_wr_detil_id' => $billing->wp_wr_detil_id);
-            $row = $this->Mod_esptpd->get_wp_wr_hotel($where, 'wp_wr_hotel');
-            $golongan_hotel =  $row->golongan_hotel;
-            $where = array('ref_kode' => $golongan_hotel);
-            $golongan = $this->Mod_esptpd->get_ref_gol_hotel($where, 'ref_gol_hotel');
-            $data['golongan'] = $golongan;
-            $data['row'] = $row;
-        } elseif ($jenispajak == '2') {
-            $espt_prt = "esptpd_resto_prt";
-            $where = array('wp_wr_detil_id' => $billing->wp_wr_detil_id);
-            $row = $this->Mod_esptpd->get_wp_wr_restoran($where, 'wp_wr_restoran');
-            $jenis_restoran =  $row->jenis_restoran;
-            $where = array('ref_kode' => $jenis_restoran);
-            $golongan = $this->Mod_esptpd->get_ref_jenis_restoran($where, 'ref_jenis_restoran');
-            $data['golongan'] = $golongan;
-        } elseif ($jenispajak == '4') {
-            $espt_prt = "esptpd_hiburan_prt";
-            $golongan = '';
-        } elseif ($jenispajak == '6') {
-            $espt_prt = "esptpd_minerba_prt";
-            $where = array('spt_id' => $billing->spt_id);
-            $row = $this->Mod_esptpd->get_minerba_detil($where, 'spt_detil_mblb');
-            $jenis_mblb =  $row->mblb_id;
-            $where = array('ref_mblb_id' => $jenis_mblb);
-            $jenis_mblb = $this->Mod_esptpd->get_jenis_mblb($where, 'ref_jenis_mblb');
-            $data['jenis_mblb'] = $jenis_mblb;
-            $data['row'] = $row;
-        } elseif ($jenispajak == '7') {
-            $where = array('spt_id' => $billing->spt_id);
-            $row = $this->Mod_esptpd->get_abt_detil($where, 'spt_detil_abt');
-            $espt_prt = "esptpd_abt_prt";
-            $data['row'] = $row;
-        } elseif ($jenispajak == '11') {
-            $espt_prt = "esptpd_parkir_prt";
-        }
+        $data['data_wp'] = $data_wp;
+        $data['bulan_pajak'] = $data_bulan[$bulan_pajak];
+        $data['tahun_pajak'] = $tahun_pajak;
+        $data['data_lapor'] = $data_lapor;
+        $espt_prt = 'cetak_sptpd';
 
-        $kode_pajak = $this->Mod_esptpd->getKodePajak($jenispajak);
-        $data['kode_pajak'] = $kode_pajak;
-
-
-
-        // $tgljatuhtempo = date('Y-m-d', strtotime('+2 month', strtotime($billing->spt_periode_jual1)));
-        // if ($billing->status_bayar == 0) {
-        //     $jml_denda = $this->fungsi->denda($tgljatuhtempo, date("Y-m-d"), $billing->spt_pajak);
-        // } else {
-        //     $tgl_setor = '';
-        //     $list_denda = $this->Mod_esptpd->getDenda($billing->spt_idwpwr, $billing->spt_periode, $billing->spt_nomor);
-        //     foreach ($list_denda as $list_denda) {
-        //         $tgl_setor = $billing->setorpajret_tgl_bayar;
-        //     }
-
-        //     $jml_denda = $this->fungsi->denda($tgljatuhtempo, $tgl_setor, $billing->spt_pajak);
+        // $list = $this->Mod_esptpd->getPrint($spt_id);
+        // foreach ($list as $billing) {
+        //     $data['spt_nomor'] = $billing->spt_id;
+        //     $data['spt_tahun_pajak'] = $billing->tahunpajak;
+        //     $data['spt_idwpwr'] = $billing->wp_wr_id;
+        //     $data['spt_tgl_entry'] = $this->fungsi->tanggalindo($billing->tgl_proses);
+        //     $data['spt_periode'] = $billing->tahun_pajak;
+        //     $data['spt_periode_jual1'] = $billing->masa_pajak1;
+        //     $data['spt_periode_jual2'] = $billing->masa_pajak2;
+        //     $data['spt_pajak'] = $billing->pajak;
+        //     $data['spt_dt_jumlah'] = $billing->nilai_terkena_pajak;
+        //     $data['spt_korek_persen_tarif'] = $billing->persen_tarif;
+        //     $data['spt_nama'] = $billing->nama;
+        //     $data['billing_id'] = $billing->kode_billing;
+        //     $data['status_bayar'] = $billing->status_bayar;
+        //     $data['spt_golongan'] = $billing->golongan;
+        //     $data['spt_jenispajak'] = $billing->jenis;
+        //     $data['npwprd'] = $billing->npwprd;
         // }
 
-        $bln = date("n", strtotime($billing->masa_pajak1));
-
-        // if ($billing->spt_pajak < 10) {
-        //     $pajakdibayar = 0;
-        //     $nihil = "[NIHIL]";
-        // } else {
-        //     $pajakdibayar = $billing->spt_pajak;
-        //     $nihil = "";
+        // if ($jenispajak == '1') {
+        //     $espt_prt = "esptpd_hotel_prt";
+        //     $where = array('wp_wr_detil_id' => $billing->wp_wr_detil_id);
+        //     $row = $this->Mod_esptpd->get_wp_wr_hotel($where, 'wp_wr_hotel');
+        //     $golongan_hotel =  $row->golongan_hotel;
+        //     $where = array('ref_kode' => $golongan_hotel);
+        //     $golongan = $this->Mod_esptpd->get_ref_gol_hotel($where, 'ref_gol_hotel');
+        //     $data['golongan'] = $golongan;
+        //     $data['row'] = $row;
+        // } elseif ($jenispajak == '2') {
+        //     $espt_prt = "esptpd_resto_prt";
+        //     $where = array('wp_wr_detil_id' => $billing->wp_wr_detil_id);
+        //     $row = $this->Mod_esptpd->get_wp_wr_restoran($where, 'wp_wr_restoran');
+        //     $jenis_restoran =  $row->jenis_restoran;
+        //     $where = array('ref_kode' => $jenis_restoran);
+        //     $golongan = $this->Mod_esptpd->get_ref_jenis_restoran($where, 'ref_jenis_restoran');
+        //     $data['golongan'] = $golongan;
+        // } elseif ($jenispajak == '4') {
+        //     $espt_prt = "esptpd_hiburan_prt";
+        //     $golongan = '';
+        // } elseif ($jenispajak == '6') {
+        //     $espt_prt = "esptpd_minerba_prt";
+        //     $where = array('spt_id' => $billing->spt_id);
+        //     $row = $this->Mod_esptpd->get_minerba_detil($where, 'spt_detil_mblb');
+        //     $jenis_mblb =  $row->mblb_id;
+        //     $where = array('ref_mblb_id' => $jenis_mblb);
+        //     $jenis_mblb = $this->Mod_esptpd->get_jenis_mblb($where, 'ref_jenis_mblb');
+        //     $data['jenis_mblb'] = $jenis_mblb;
+        //     $data['row'] = $row;
+        // } elseif ($jenispajak == '7') {
+        //     $where = array('spt_id' => $billing->spt_id);
+        //     $row = $this->Mod_esptpd->get_abt_detil($where, 'spt_detil_abt');
+        //     $espt_prt = "esptpd_abt_prt";
+        //     $data['row'] = $row;
+        // } elseif ($jenispajak == '11') {
+        //     $espt_prt = "esptpd_parkir_prt";
         // }
-        // $data['jml_denda'] = $jml_denda;
-        // $data['pajakdibayar'] = $pajakdibayar;
-        // $data['nihil'] = $nihil;
-        $data['bln_masapajak'] = $this->fungsi->bulan($bln);
 
-        // var_dump($data);
-        // die();
+        // $kode_pajak = $this->Mod_esptpd->getKodePajak($jenispajak);
+        // $data['kode_pajak'] = $kode_pajak;
+
+
+
+        // // $tgljatuhtempo = date('Y-m-d', strtotime('+2 month', strtotime($billing->spt_periode_jual1)));
+        // // if ($billing->status_bayar == 0) {
+        // //     $jml_denda = $this->fungsi->denda($tgljatuhtempo, date("Y-m-d"), $billing->spt_pajak);
+        // // } else {
+        // //     $tgl_setor = '';
+        // //     $list_denda = $this->Mod_esptpd->getDenda($billing->spt_idwpwr, $billing->spt_periode, $billing->spt_nomor);
+        // //     foreach ($list_denda as $list_denda) {
+        // //         $tgl_setor = $billing->setorpajret_tgl_bayar;
+        // //     }
+
+        // //     $jml_denda = $this->fungsi->denda($tgljatuhtempo, $tgl_setor, $billing->spt_pajak);
+        // // }
+
+        // $bln = date("n", strtotime($billing->masa_pajak1));
+
+        // // if ($billing->spt_pajak < 10) {
+        // //     $pajakdibayar = 0;
+        // //     $nihil = "[NIHIL]";
+        // // } else {
+        // //     $pajakdibayar = $billing->spt_pajak;
+        // //     $nihil = "";
+        // // }
+        // // $data['jml_denda'] = $jml_denda;
+        // // $data['pajakdibayar'] = $pajakdibayar;
+        // // $data['nihil'] = $nihil;
+        // $data['bln_masapajak'] = $this->fungsi->bulan($bln);
         $mpdf = new \Mpdf\Mpdf();
-        // $this->template->load('layoutbackend', 'esptpd/esptpd_resto_prt', $data);
 
         $html = $this->load->view('esptpd/' . $espt_prt, $data, TRUE);
         $mpdf->WriteHTML($html);
