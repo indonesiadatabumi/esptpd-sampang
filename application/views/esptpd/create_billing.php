@@ -22,7 +22,7 @@
                         <table class="table">
                             <input type="hidden" name="wp_id" id="wp_id" class="form-control-sm" value="<?= $wp_id ?>" size="10" readonly="true" style="background-color:azure;" />
                             <input type="hidden" name="wp_id_detil" id="wp_id_detil" class="form-control-sm" value="<?= $wp_id_detil ?>" size="10" readonly="true" style="background-color:azure;" />
-                            <input type="hidden" name="spt_jenis" id="spt_jenis" class="form-control-sm" value="1" size="3" readonly="true" style="background-color:azure;" />
+                            <input type="hidden" name="spt_jenis" id="spt_jenis" class="form-control-sm" value="<?= $jns_pajak ?>" size="3" readonly="true" style="background-color:azure;" />
                             <!-- <tr>
                                 <td><label for="no_sptpd">No. SPTPD</label></td>
                                 <td>
